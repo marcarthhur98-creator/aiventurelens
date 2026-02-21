@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { SECTIONS } from "@/lib/questions";
 import type { Answer, AnswerValue, CompanyContext } from "@/types/assessment.types";
-import type { AnalysisResult } from "@/types/results.types";
+import { analyzeAssessment } from "@/lib/client/analyze";
 import { CompanyContextForm } from "./CompanyContextForm";
 import { SectionForm } from "./SectionForm";
 import { StepIndicator } from "./StepIndicator";
@@ -64,21 +64,7 @@ export function AssessmentWizard() {
     setAnalyzeError(null);
 
     try {
-      const response = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          companyContext: companyContext!,
-          answers: allAnswers,
-        }),
-      });
-
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err.error || `HTTP ${response.status}`);
-      }
-
-      const result: AnalysisResult = await response.json();
+      const result = await analyzeAssessment(companyContext!, allAnswers);
       sessionStorage.setItem("aiventurelens_result", JSON.stringify(result));
       router.push("/results");
     } catch (err) {

@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["@anthropic-ai/sdk"],
+  output: "export",
+  basePath: "/aiventurelens",
+  images: { unoptimized: true },
+  trailingSlash: true,
 };
 
 export default nextConfig;
